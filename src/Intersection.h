@@ -39,11 +39,11 @@ public:
     void setIsBlocked(bool isBlocked);
 
     // typical behaviour methods
-    void addVehicleToQueue(std::shared_ptr<Vehicle> vehicle);
-    void addStreet(std::shared_ptr<Street> street);
-    std::vector<std::shared_ptr<Street>> queryStreets(std::shared_ptr<Street> incoming); // return pointer to current list of all outgoing streets
+    void addVehicleToQueue(const std::shared_ptr<Vehicle>& vehicle);
+    void addStreet(const std::shared_ptr<Street>& street);
+    std::vector<std::shared_ptr<Street>> queryStreets(const std::shared_ptr<Street>& incoming); // return pointer to current list of all outgoing streets
     void simulate() override;
-    void vehicleHasLeft(std::shared_ptr<Vehicle> vehicle);
+    void vehicleHasLeft(const std::shared_ptr<Vehicle>& vehicle);
     bool trafficLightIsGreen();
 
 private:
