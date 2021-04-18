@@ -22,13 +22,10 @@ private:
     std::mutex _mutex;
 };
 
-
 enum class TrafficLightPhase {
     red,
     green
 };
-
-std::ostream &operator<<(std::ostream &os, const TrafficLightPhase &phase);
 
 class TrafficLight : public TrafficObject {
 public:

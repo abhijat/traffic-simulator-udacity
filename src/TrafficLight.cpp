@@ -9,11 +9,11 @@ class MessageQueue<TrafficLightPhase>;
 
 template<typename T>
 T MessageQueue<T>::receive() {
+    _queue.clear();
     std::unique_lock<std::mutex> lck{_mutex};
     _condition.wait(lck, [this] { return !_queue.empty(); });
     auto t = std::move(_queue.front());
     _queue.pop_front();
-
     return t;
 }
 
@@ -53,35 +53,17 @@ void TrafficLight::simulate() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator{seed};
     std::uniform_int_distribution<int> distribution(4000, 6000);
+    double cycleDuration = distribution(generator);
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-        int cycleDuration = distribution(generator);
-
         long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now() - lastUpdate).count();
         if (timeSinceLastUpdate > cycleDuration) {
-
-            std::cout << "Phase switch\n";
             _currentPhase = _currentPhase == TrafficLightPhase::green ? TrafficLightPhase::red
                                                                       : TrafficLightPhase::green;
             _phases.send(std::move(_currentPhase));
-            std::cout << "Phase switch to: " << _currentPhase << ", cycleDuration: " << cycleDuration
-                      << "\n";
             lastUpdate = std::chrono::system_clock::now();
         }
     }
-}
-
-std::ostream &operator<<(std::ostream &os, const TrafficLightPhase &phase) {
-    switch (phase) {
-        case TrafficLightPhase::red:
-            os << "RED";
-            break;
-        case TrafficLightPhase::green:
-            os << "GREEN";
-            break;
-    }
-    return os;
 }
